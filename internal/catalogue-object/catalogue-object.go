@@ -1,7 +1,9 @@
 package catalogueobject
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/qwuiemme/ellipsespace-server/pkg/client"
@@ -46,6 +48,23 @@ type CatalogueObject struct {
 	SecondSpaceVelocity float32 `json:"v2"`
 	//Фотографии
 	Photos []string `json:"photos"`
+}
+
+func Unmarshal(r io.Reader) (*CatalogueObject, error) {
+	jsonByte, err := io.ReadAll(r)
+
+	if err != nil {
+		return &CatalogueObject{}, err
+	}
+
+	var obj CatalogueObject
+	err = json.Unmarshal(jsonByte, &obj)
+
+	if err != nil {
+		return &CatalogueObject{}, err
+	}
+
+	return &obj, nil
 }
 
 func (c *CatalogueObject) Save() {

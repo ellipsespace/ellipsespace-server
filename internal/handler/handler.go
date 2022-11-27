@@ -1,13 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	catalogueobject "github.com/qwuiemme/ellipsespace-server/internal/catalogue-object"
-	servererror "github.com/qwuiemme/ellipsespace-server/internal/server-error"
+	serverstatus "github.com/qwuiemme/ellipsespace-server/internal/server-status"
 )
 
 func InitHandler() *gin.Engine {
@@ -26,21 +24,10 @@ func indexHandler(c *gin.Context) {
 }
 
 func addObjectCatalogueHandler(c *gin.Context) {
-	jsonByte, err := ioutil.ReadAll(c.Request.Body)
+	obj, err := catalogueobject.Unmarshal(c.Request.Body)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, servererror.ErrorJson{
-			Message: err.Error(),
-		})
-
-		return
-	}
-
-	var obj catalogueobject.CatalogueObject
-	err = json.Unmarshal(jsonByte, &obj)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, servererror.ErrorJson{
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
 			Message: err.Error(),
 		})
 
@@ -50,45 +37,33 @@ func addObjectCatalogueHandler(c *gin.Context) {
 	err = obj.AddToDatabase()
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, servererror.ErrorJson{
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
 			Message: err.Error(),
 		})
 
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "Complete!",
+	c.JSON(http.StatusOK, serverstatus.StatusJson{
+		Message: "Complete!",
 	})
 }
 
-// Необходимо переписать!
 func getObjectCatalogueHandler(c *gin.Context) {
-	jsonByte, err := ioutil.ReadAll(c.Request.Body)
+	name, err := catalogueobject.UnmarshalJsonGet(c.Request.Body)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, servererror.ErrorJson{
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
 			Message: err.Error(),
 		})
 
 		return
 	}
 
-	var obj catalogueobject.CatalogueObject
-	err = json.Unmarshal(jsonByte, &obj)
+	obj, err := catalogueobject.GetFromDatabase(name.Name)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, servererror.ErrorJson{
-			Message: err.Error(),
-		})
-
-		return
-	}
-
-	obj, err = catalogueobject.GetFromDatabase(obj.Name)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, servererror.ErrorJson{
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
 			Message: err.Error(),
 		})
 
