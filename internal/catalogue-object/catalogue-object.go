@@ -97,9 +97,17 @@ func GetFromDatabase(name string) (c CatalogueObject, err error) {
 	}
 
 	for res.Next() {
+		var (
+			satelites string
+			photos    string
+		)
+
 		err = res.Scan(&c.Name, &c.Description, &c.OpeningDateTime, &c.SidericConversionPeriod, &c.BodyOrbitalVelocity,
-			&c.Inclination, &c.Satelites, &c.WhoseSatelite, &c.EquatorialRadius, &c.PolarRadius, &c.AverageRadius, &c.Square,
-			&c.Volume, &c.Weight, &c.AverageDensity, &c.GravityAcceleration, &c.FirstSpaceVelocity, &c.SecondSpaceVelocity, &c.Photos)
+			&c.Inclination, &satelites, &c.WhoseSatelite, &c.EquatorialRadius, &c.PolarRadius, &c.AverageRadius, &c.Square,
+			&c.Volume, &c.Weight, &c.AverageDensity, &c.GravityAcceleration, &c.FirstSpaceVelocity, &c.SecondSpaceVelocity, &photos)
+
+		c.Satelites = strings.Split(satelites, "\n")
+		c.Photos = strings.Split(satelites, "\n")
 
 		if err != nil {
 			return CatalogueObject{}, err
