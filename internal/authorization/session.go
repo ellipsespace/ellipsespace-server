@@ -1,7 +1,9 @@
 package authorization
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"strconv"
 
 	"github.com/qwuiemme/ellipsespace-server/pkg/client"
@@ -13,6 +15,23 @@ type Session struct {
 	Login       string `json:"login"`
 	Password    string `json:"password"`
 	AccessLevel int8   `json:"access-level"`
+}
+
+func Unmarshal(r io.Reader) (*Session, error) {
+	jsonByte, err := io.ReadAll(r)
+
+	if err != nil {
+		return &Session{}, err
+	}
+
+	var obj Session
+	err = json.Unmarshal(jsonByte, &obj)
+
+	if err != nil {
+		return &Session{}, err
+	}
+
+	return &obj, nil
 }
 
 func GetSession(name string) (s Session, err error) {
@@ -36,6 +55,20 @@ func GetSession(name string) (s Session, err error) {
 	}
 
 	return
+}
+
+func (s *Session) AddToDatabase() error {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query(fmt.Sprintf("INSERT INTO `sessions` VALUES ('%s', '%s', '%s')", s.Login, s.Password, strconv.Itoa(int(s.AccessLevel))))
+
+	if err != nil {
+		return err
+	} else {
+		defer res.Close()
+		return nil
+	}
 }
 
 func (s *Session) Update() error {

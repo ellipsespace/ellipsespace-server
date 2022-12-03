@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/qwuiemme/ellipsespace-server/internal/authorization"
 	catalogueobject "github.com/qwuiemme/ellipsespace-server/internal/catalogue-object"
 	serverstatus "github.com/qwuiemme/ellipsespace-server/internal/server-status"
 )
@@ -16,8 +17,12 @@ func InitHandler() *gin.Engine {
 	api := router.Group("/api/")
 	{
 		api.POST("add-object-catologue", addObjectCatalogueHandler)
-		api.POST("get-object-catalogue", getObjectCatalogueHandler)
-		api.POST("get-all-object-catalogue", getAllObjectCatalogue)
+		api.GET("get-object-catalogue", getObjectCatalogueHandler)
+		api.GET("get-all-object-catalogue", getAllObjectCatalogueHandler)
+		sessions := api.Group("session/")
+		{
+			sessions.POST("create", createSessionHandler)
+		}
 	}
 
 	return router
@@ -77,7 +82,7 @@ func getObjectCatalogueHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, obj)
 }
 
-func getAllObjectCatalogue(c *gin.Context) {
+func getAllObjectCatalogueHandler(c *gin.Context) {
 	slice, err := catalogueobject.GetAllFromDatabase()
 
 	if err != nil {
@@ -87,4 +92,30 @@ func getAllObjectCatalogue(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, slice)
+}
+
+func createSessionHandler(c *gin.Context) {
+	obj, err := authorization.Unmarshal(c.Request.Body)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	err = obj.AddToDatabase()
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, serverstatus.StatusJson{
+		Message: "Complete!",
+	})
 }
