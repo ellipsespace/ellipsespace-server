@@ -105,6 +105,16 @@ func createSessionHandler(c *gin.Context) {
 		return
 	}
 
+	err = obj.SetPassword(obj.Password)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
 	err = obj.AddToDatabase()
 
 	if err != nil {
