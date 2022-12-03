@@ -13,8 +13,12 @@ func InitHandler() *gin.Engine {
 	router.LoadHTMLGlob("pages/*")
 
 	router.GET("/", indexHandler)
-	router.POST("/add-object-catologue", addObjectCatalogueHandler)
-	router.POST("/get-object-catalogue", getObjectCatalogueHandler)
+	api := router.Group("/api/")
+	{
+		api.POST("add-object-catologue", addObjectCatalogueHandler)
+		api.POST("get-object-catalogue", getObjectCatalogueHandler)
+		api.POST("get-all-object-catalogue", getAllObjectCatalogue)
+	}
 
 	return router
 }
@@ -71,4 +75,16 @@ func getObjectCatalogueHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, obj)
+}
+
+func getAllObjectCatalogue(c *gin.Context) {
+	slice, err := catalogueobject.GetAllFromDatabase()
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, slice)
 }

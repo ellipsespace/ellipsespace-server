@@ -139,6 +139,43 @@ func GetFromDatabase(name string) (c CatalogueObject, err error) {
 	return
 }
 
+func GetAllFromDatabase() (cs []CatalogueObject, err error) {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query("SELECT * FROM `catalogue`")
+
+	if err != nil {
+		return []CatalogueObject{}, err
+	}
+
+	for i := 0; res.Next(); i++ {
+		var (
+			c         CatalogueObject
+			satelites string
+			photos    string
+		)
+
+		err = res.Scan(&c.Name, &c.Description, &c.OpeningDateTime, &c.SidericConversionPeriod, &c.BodyOrbitalVelocity,
+			&c.Inclination, &satelites, &c.WhoseSatelite, &c.EquatorialRadius, &c.PolarRadius, &c.AverageRadius, &c.Square,
+			&c.Volume, &c.Weight, &c.AverageDensity, &c.GravityAcceleration, &c.FirstSpaceVelocity, &c.SecondSpaceVelocity, &photos)
+
+		c.Satelites = strings.Split(satelites, "\n")
+		c.Photos = strings.Split(satelites, "\n")
+
+		if err != nil {
+			return []CatalogueObject{}, err
+		}
+
+		c.Satelites = strings.Split(satelites, "\n")
+		c.Photos = strings.Split(satelites, "\n")
+
+		cs[i] = c
+	}
+
+	return
+}
+
 func (c *CatalogueObject) AddPhoto(link string) {
 	c.Photos = append(c.Photos, link)
 	c.Save()
