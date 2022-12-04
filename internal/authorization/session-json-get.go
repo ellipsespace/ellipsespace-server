@@ -7,6 +7,7 @@ import (
 
 type SessionJsonGet struct {
 	SessionName string `json:"sname"`
+	Password    string `json:"password"`
 }
 
 func UnmarshalJsonGet(r io.Reader) (*SessionJsonGet, error) {

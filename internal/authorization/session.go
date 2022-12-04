@@ -10,11 +10,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Session struct {
-	Id          int
+type SessionBase struct {
+	Id          int    `json:"id"`
 	SessionName string `json:"sname"`
-	Password    string `json:"password"`
 	AccessLevel int8   `json:"access-level"`
+}
+
+type Session struct {
+	SessionBase
+	Password string `json:"password"`
 }
 
 func Unmarshal(r io.Reader) (*Session, error) {
@@ -38,7 +42,7 @@ func GetSession(sessionName string) (s Session, err error) {
 	conn := client.Connect()
 	defer conn.Close()
 
-	res, err := conn.Query(fmt.Sprintf("GET * FROM `sessions` WHERE SessionName = '%s'", sessionName))
+	res, err := conn.Query(fmt.Sprintf("SELECT * FROM `sessions` WHERE SessionName = '%s'", sessionName))
 
 	if err != nil {
 		return Session{}, err
@@ -61,7 +65,7 @@ func (s *Session) AddToDatabase() error {
 	conn := client.Connect()
 	defer conn.Close()
 
-	res, err := conn.Query(fmt.Sprintf("INSERT INTO `sessions` VALUES ('%s', '%s', '%s')", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel))))
+	res, err := conn.Query(fmt.Sprintf("INSERT INTO `sessions` VALUES (0, '%s', '%s', '%s')", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel))))
 
 	if err != nil {
 		return err
@@ -75,7 +79,7 @@ func (s *Session) Update() error {
 	conn := client.Connect()
 	defer conn.Close()
 
-	res, err := conn.Query(fmt.Sprintf("UPDATE `session` SET SessionName = '%s', Password = '%s', AccessLevel = '%s' WHERE Id = '%s'", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel)), strconv.Itoa(s.Id)))
+	res, err := conn.Query(fmt.Sprintf("UPDATE `sessions` SET SessionName = '%s', Password = '%s', AccessLevel = '%s' WHERE Id = '%s'", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel)), strconv.Itoa(s.Id)))
 
 	if err != nil {
 		return err
@@ -98,12 +102,6 @@ func (s *Session) SetPassword(password string) error {
 	return nil
 }
 
-func (s *Session) ComparePassword(input string) (bool, error) {
-	err := bcrypt.CompareHashAndPassword([]byte(s.Password), []byte(input))
-
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+func (s *Session) ComparePassword(input string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(s.Password), []byte(input)) == nil
 }

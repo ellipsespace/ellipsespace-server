@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/qwuiemme/ellipsespace-server/internal/authorization"
@@ -16,14 +17,21 @@ func InitHandler() *gin.Engine {
 	router.GET("/", indexHandler)
 	api := router.Group("/api/")
 	{
-		api.POST("add-object-catologue", addObjectCatalogueHandler)
-		api.GET("get-object-catalogue", getObjectCatalogueHandler)
-		api.GET("get-all-object-catalogue", getAllObjectCatalogueHandler)
 		sessions := api.Group("session/")
 		{
 			sessions.POST("create", createSessionHandler)
 			sessions.GET("auth", authSessionHandler)
 		}
+
+		api.Use(authorization.AuthorizationRequired)
+
+		api.GET("get-object-catalogue", getObjectCatalogueHandler)
+		api.GET("get-all-object-catalogue", getAllObjectCatalogueHandler)
+		sessions.PUT("update", updateSessionHandler)
+
+		api.Use(authorization.AdminAccessLevelRequired)
+
+		api.POST("add-object-catologue", addObjectCatalogueHandler)
 	}
 
 	return router
@@ -54,8 +62,8 @@ func addObjectCatalogueHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serverstatus.StatusJson{
-		Message: "Complete!",
+	c.JSON(http.StatusCreated, serverstatus.StatusJson{
+		Message: "Done.",
 	})
 }
 
@@ -73,7 +81,7 @@ func getObjectCatalogueHandler(c *gin.Context) {
 	obj, err := catalogueobject.GetFromDatabase(name.Name)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+		c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{
 			Message: err.Error(),
 		})
 
@@ -119,7 +127,101 @@ func createSessionHandler(c *gin.Context) {
 	err = obj.AddToDatabase()
 
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	*obj, err = authorization.GetSession(obj.SessionName)
+
+	if err != nil {
 		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"id": obj.Id,
+	})
+}
+
+func authSessionHandler(c *gin.Context) {
+	get, err := authorization.UnmarshalJsonGet(c.Request.Body)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	obj, err := authorization.GetSession(get.SessionName)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	if obj.ComparePassword(get.Password) {
+		token, err := authorization.GenerateJWT(obj.SessionBase)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{
+				Message: err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, token)
+	} else {
+		c.JSON(http.StatusUnauthorized, serverstatus.StatusJson{
+			Message: "The session name or password entered is incorrect.",
+		})
+	}
+}
+
+func updateSessionHandler(c *gin.Context) {
+	obj, err := authorization.Unmarshal(c.Request.Body)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	if data, _ := authorization.ParseJWT(strings.Split(c.Request.Header.Get("Authorization"), " ")[1]); data.SessionName != obj.SessionName || (data.SessionName != obj.SessionName && data.AccessLevel != 1) {
+		c.JSON(http.StatusForbidden, serverstatus.StatusJson{
+			Message: "You are trying to edit someone else's session data without the necessary rights.",
+		})
+
+		return
+	}
+
+	err = obj.SetPassword(obj.Password)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	err = obj.Update()
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{
 			Message: err.Error(),
 		})
 
@@ -127,30 +229,6 @@ func createSessionHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, serverstatus.StatusJson{
-		Message: "Complete!",
+		Message: "Done.",
 	})
-}
-
-func authSessionHandler(c *gin.Context) {
-	name, err := authorization.UnmarshalJsonGet(c.Request.Body)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
-			Message: err.Error(),
-		})
-
-		return
-	}
-
-	obj, err := authorization.GetSession(name.SessionName)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
-			Message: "The session name or password entered is incorrect.",
-		})
-
-		return
-	}
-
-	c.JSON(http.StatusOK, obj)
 }
