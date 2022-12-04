@@ -170,7 +170,7 @@ func GetAllFromDatabase() (cs []CatalogueObject, err error) {
 		c.Satelites = strings.Split(satelites, "\n")
 		c.Photos = strings.Split(satelites, "\n")
 
-		cs[i] = c
+		cs = append(cs, c)
 	}
 
 	return
