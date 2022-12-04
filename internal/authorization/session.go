@@ -12,7 +12,7 @@ import (
 
 type Session struct {
 	Id          int
-	Login       string `json:"login"`
+	SessionName string `json:"sname"`
 	Password    string `json:"password"`
 	AccessLevel int8   `json:"access-level"`
 }
@@ -34,11 +34,11 @@ func Unmarshal(r io.Reader) (*Session, error) {
 	return &obj, nil
 }
 
-func GetSession(name string) (s Session, err error) {
+func GetSession(sessionName string) (s Session, err error) {
 	conn := client.Connect()
 	defer conn.Close()
 
-	res, err := conn.Query(fmt.Sprintf("GET * FROM `sessions` WHERE Name = '%s'", name))
+	res, err := conn.Query(fmt.Sprintf("GET * FROM `sessions` WHERE SessionName = '%s'", sessionName))
 
 	if err != nil {
 		return Session{}, err
@@ -47,7 +47,7 @@ func GetSession(name string) (s Session, err error) {
 	defer res.Close()
 
 	for res.Next() {
-		err = res.Scan(&s.Id, &s.Login, &s.Password, &s.AccessLevel)
+		err = res.Scan(&s.Id, &s.SessionName, &s.Password, &s.AccessLevel)
 
 		if err != nil {
 			return Session{}, err
@@ -61,7 +61,7 @@ func (s *Session) AddToDatabase() error {
 	conn := client.Connect()
 	defer conn.Close()
 
-	res, err := conn.Query(fmt.Sprintf("INSERT INTO `sessions` VALUES ('%s', '%s', '%s')", s.Login, s.Password, strconv.Itoa(int(s.AccessLevel))))
+	res, err := conn.Query(fmt.Sprintf("INSERT INTO `sessions` VALUES ('%s', '%s', '%s')", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel))))
 
 	if err != nil {
 		return err
@@ -75,7 +75,7 @@ func (s *Session) Update() error {
 	conn := client.Connect()
 	defer conn.Close()
 
-	res, err := conn.Query(fmt.Sprintf("UPDATE `session` SET Login = '%s', Password = '%s', AccessLevel = '%s' WHERE Id = '%s'", s.Login, s.Password, strconv.Itoa(int(s.AccessLevel)), strconv.Itoa(s.Id)))
+	res, err := conn.Query(fmt.Sprintf("UPDATE `session` SET SessionName = '%s', Password = '%s', AccessLevel = '%s' WHERE Id = '%s'", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel)), strconv.Itoa(s.Id)))
 
 	if err != nil {
 		return err

@@ -22,6 +22,7 @@ func InitHandler() *gin.Engine {
 		sessions := api.Group("session/")
 		{
 			sessions.POST("create", createSessionHandler)
+			sessions.GET("auth", authSessionHandler)
 		}
 	}
 
@@ -128,4 +129,28 @@ func createSessionHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, serverstatus.StatusJson{
 		Message: "Complete!",
 	})
+}
+
+func authSessionHandler(c *gin.Context) {
+	name, err := authorization.UnmarshalJsonGet(c.Request.Body)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+
+		return
+	}
+
+	obj, err := authorization.GetSession(name.SessionName)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
+			Message: "The session name or password entered is incorrect.",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, obj)
 }
