@@ -1,0 +1,297 @@
+basePath: /
+definitions:
+  authorization.Session:
+    properties:
+      access-level:
+        type: integer
+      id:
+        type: integer
+      password:
+        type: string
+      sname:
+        type: string
+    type: object
+  authorization.SessionJsonGet:
+    properties:
+      password:
+        type: string
+      sname:
+        type: string
+    type: object
+  catalogueobject.CatalogueObject:
+    properties:
+      avg-radius:
+        description: Средний радиус
+        type: number
+      description:
+        description: Подробное описание
+        type: string
+      equator-radius:
+        description: Экваториальный радиус
+        type: number
+      g:
+        description: Ускорение свободного падения
+        type: number
+      inclination:
+        description: Наклонение
+        type: number
+      m:
+        description: Масса
+        type: number
+      name:
+        description: Название спутника
+        type: string
+      o-date-time:
+        description: Дата обнаружения EllipseSpace
+        type: string
+      orbital-vel:
+        description: Орбитальная скорость
+        type: number
+      p:
+        description: Средняя плотность
+        type: number
+      photos:
+        description: Фотографии
+        items:
+          type: string
+        type: array
+      polar-radius:
+        description: Полярный радиус
+        type: number
+      s:
+        description: Площадь
+        type: number
+      s-conversion-period:
+        description: Сидерический период обращения
+        type: number
+      satelites:
+        description: Спутники
+        items:
+          type: string
+        type: array
+      v:
+        description: Объем
+        type: number
+      v1:
+        description: Первая космическая скорость
+        type: number
+      v2:
+        description: Вторая космическая скорость
+        type: number
+      whose-satelite:
+        description: Чей спутник
+        type: string
+    type: object
+  catalogueobject.CatalogueObjectJsonGet:
+    properties:
+      name:
+        type: string
+    type: object
+  serverstatus.StatusJson:
+    properties:
+      msg:
+        type: string
+    type: object
+host: localhost:8888
+info:
+  contact: {}
+  description: API for the Encyclopedia of Space project
+  title: EllipseSpace API
+  version: "0.0"
+paths:
+  /api/add-object-catologue:
+    post:
+      consumes:
+      - application/json
+      description: Add a record of the object to the database.
+      parameters:
+      - description: Object info
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/catalogueobject.CatalogueObject'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+      security:
+      - ApiKeyAuth: []
+      summary: Add Object Catalogue
+      tags:
+      - MainAPI
+  /api/get-all-object-catologue:
+    get:
+      description: Returns all object records in the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/catalogueobject.CatalogueObject'
+            type: array
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Objects Catalogue
+      tags:
+      - MainAPI
+  /api/get-object-catologue:
+    get:
+      consumes:
+      - application/json
+      description: Returns an object record or null object with the passed name.
+      parameters:
+      - description: Object name
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/catalogueobject.CatalogueObjectJsonGet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/catalogueobject.CatalogueObject'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Object Catalogue
+      tags:
+      - MainAPI
+  /api/session/auth:
+    get:
+      consumes:
+      - application/json
+      description: Checks the entered data for correctness and returns the JWT token
+        if the check is successful.
+      parameters:
+      - description: Session data
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/authorization.SessionJsonGet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      summary: Authorize in Session
+      tags:
+      - Sessions
+  /api/session/create:
+    post:
+      consumes:
+      - application/json
+      description: Writes a new session to the database and returns its Id.
+      parameters:
+      - description: Session data
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/authorization.Session'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: number
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      summary: Create Session
+      tags:
+      - Sessions
+  /api/session/update:
+    put:
+      consumes:
+      - application/json
+      description: Updates the session data with the specified Id.
+      parameters:
+      - description: Session data
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/authorization.Session'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Session
+      tags:
+      - Sessions
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
