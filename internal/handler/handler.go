@@ -270,7 +270,7 @@ func updateSessionHandler(c *gin.Context) {
 		return
 	}
 
-	if data, _ := authorization.ParseJWT(strings.Split(c.Request.Header.Get("Authorization"), " ")[1]); data.SessionName != obj.SessionName || (data.SessionName != obj.SessionName && data.AccessLevel != 1) {
+	if data, _ := authorization.ParseJWT(strings.Split(c.Request.Header.Get("Authorization"), " ")[1]); data.SessionName != obj.SessionName || (data.SessionName != obj.SessionName && data.AccessLevel != authorization.ADMIN_LEVEL) {
 		c.JSON(http.StatusForbidden, serverstatus.StatusJson{
 			Message: "You are trying to edit someone else's session data without the necessary rights.",
 		})
@@ -288,7 +288,11 @@ func updateSessionHandler(c *gin.Context) {
 		return
 	}
 
-	err = obj.Update()
+	if sb := authorization.ParseJWTFromHeader(c); sb.AccessLevel == authorization.ADMIN_LEVEL {
+		err = obj.UpdateAll()
+	} else {
+		err = obj.Update()
+	}
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{

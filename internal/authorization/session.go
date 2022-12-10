@@ -65,6 +65,20 @@ func (s *Session) AddToDatabase() error {
 	conn := client.Connect()
 	defer conn.Close()
 
+	res, err := conn.Query(fmt.Sprintf("INSERT INTO `sessions` VALUES (0, '%s', '%s', 0)", s.SessionName, s.Password))
+
+	if err != nil {
+		return err
+	} else {
+		defer res.Close()
+		return nil
+	}
+}
+
+func (s *Session) AddFullToDatabase() error {
+	conn := client.Connect()
+	defer conn.Close()
+
 	res, err := conn.Query(fmt.Sprintf("INSERT INTO `sessions` VALUES (0, '%s', '%s', '%s')", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel))))
 
 	if err != nil {
@@ -76,6 +90,21 @@ func (s *Session) AddToDatabase() error {
 }
 
 func (s *Session) Update() error {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query(fmt.Sprintf("UPDATE `sessions` SET SessionName = '%s', Password = '%s' WHERE Id = '%s'", s.SessionName, s.Password, strconv.Itoa(int(s.AccessLevel))))
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Close()
+
+	return nil
+}
+
+func (s *Session) UpdateAll() error {
 	conn := client.Connect()
 	defer conn.Close()
 
