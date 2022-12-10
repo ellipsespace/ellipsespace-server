@@ -119,6 +119,21 @@ func (s *Session) UpdateAll() error {
 	return nil
 }
 
+func Delete(id int) error {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query(fmt.Sprintf("DELETE FROM `sessions` WHERE Id = %s", strconv.Itoa(id)))
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Close()
+
+	return nil
+}
+
 func (s *Session) SetPassword(password string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 

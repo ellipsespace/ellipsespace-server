@@ -11,6 +11,11 @@ definitions:
       sname:
         type: string
     type: object
+  authorization.SessionJsonDelete:
+    properties:
+      id:
+        type: integer
+    type: object
   authorization.SessionJsonGet:
     properties:
       password:
@@ -124,9 +129,47 @@ paths:
             $ref: '#/definitions/serverstatus.StatusJson'
         "401":
           description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
       security:
       - ApiKeyAuth: []
       summary: Add Object Catalogue
+      tags:
+      - MainAPI
+  /api/delete-object-catologue:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a record of the object to the database by name.
+      parameters:
+      - description: Object info
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/catalogueobject.CatalogueObjectJsonGet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Object Catalogue
       tags:
       - MainAPI
   /api/get-all-object-catologue:
@@ -251,6 +294,40 @@ paths:
       summary: Create Session
       tags:
       - Sessions
+  /api/session/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the session data with the specified Id.
+      parameters:
+      - description: Object info
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/authorization.SessionJsonDelete'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Session
+      tags:
+      - Sessions
   /api/session/update:
     put:
       consumes:
@@ -289,6 +366,40 @@ paths:
       summary: Update Session
       tags:
       - Sessions
+  /api/update-object-catologue:
+    put:
+      consumes:
+      - application/json
+      description: Update a record of the object to the database.
+      parameters:
+      - description: Object info
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/catalogueobject.CatalogueObject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Object Catalogue
+      tags:
+      - MainAPI
 securityDefinitions:
   ApiKeyAuth:
     in: header

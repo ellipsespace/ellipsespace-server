@@ -67,10 +67,6 @@ func Unmarshal(r io.Reader) (*CatalogueObject, error) {
 	return &obj, nil
 }
 
-func (c *CatalogueObject) Save() {
-
-}
-
 func (c *CatalogueObject) AddToDatabase() error {
 	conn := client.Connect()
 	defer conn.Close()
@@ -103,6 +99,41 @@ func (c *CatalogueObject) AddToDatabase() error {
 		defer res.Close()
 		return nil
 	}
+}
+
+func (c *CatalogueObject) Update() error {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query(fmt.Sprintf("UPDATE `catalogue` SET Name = '%s', Description = '%s', OpeningDatetTime = '%s', SidericConversionPeriod = '%s', BodyOrbitalVelocity = '%s', Inclination = '%s', Satelites = '%s', WhoseSatelite = '%s', EquatorialRadius = '%s', PolarRadius = '%s', AverageRadius = '%s', Square = '%s', Volume = '%s', Weight = '%s', AverageDensity = '%s', GravityAcceleration = '%s', FirstSpaceVelocity = '%s', SecondSpaceVelocity = '%s', Photos = '%s'",
+		c.Name,
+		c.Description,
+		c.OpeningDateTime,
+		fmt.Sprintf("%g", c.SidericConversionPeriod),
+		fmt.Sprintf("%g", c.BodyOrbitalVelocity),
+		fmt.Sprintf("%g", c.Inclination),
+		strings.Join(c.Satelites, "\n"),
+		c.WhoseSatelite,
+		fmt.Sprintf("%g", c.EquatorialRadius),
+		fmt.Sprintf("%g", c.PolarRadius),
+		fmt.Sprintf("%g", c.AverageRadius),
+		fmt.Sprintf("%e", c.Square),
+		fmt.Sprintf("%e", c.Volume),
+		fmt.Sprintf("%e", c.Weight),
+		fmt.Sprintf("%g", c.AverageDensity),
+		fmt.Sprintf("%g", c.GravityAcceleration),
+		fmt.Sprintf("%g", c.FirstSpaceVelocity),
+		fmt.Sprintf("%g", c.SecondSpaceVelocity),
+		strings.Join(c.Photos, "\n"),
+	))
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Close()
+
+	return nil
 }
 
 func GetFromDatabase(name string) (c CatalogueObject, err error) {
@@ -176,9 +207,23 @@ func GetAllFromDatabase() (cs []CatalogueObject, err error) {
 	return
 }
 
+func Delete(name string) error {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query(fmt.Sprintf("DELETE FROM `catalogue` WHERE Name = '%s'", name))
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Close()
+
+	return nil
+}
+
 func (c *CatalogueObject) AddPhoto(link string) {
 	c.Photos = append(c.Photos, link)
-	c.Save()
 }
 
 func (c *CatalogueObject) DeletePhoto(link string) {
