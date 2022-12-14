@@ -4,9 +4,9 @@
         "description": "API for the Encyclopedia of Space project",
         "title": "EllipseSpace API",
         "contact": {},
-        "version": "0.0"
+        "version": "1.0"
     },
-    "host": "localhost:8888",
+    "host": "ellipsespace.ml",
     "basePath": "/",
     "paths": {
         "/api/add-object-catologue": {

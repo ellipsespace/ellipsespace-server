@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/qwuiemme/ellipsespace-server/config"
 	"github.com/qwuiemme/ellipsespace-server/internal/handler"
 )
 
@@ -17,4 +18,10 @@ func (s *Server) Run(addr string) error {
 	}
 
 	return s.core.ListenAndServe()
+}
+
+func (s Server) MakeAddr() string {
+	conf := config.New()
+
+	return conf.AppIP + ":" + conf.AppPort
 }

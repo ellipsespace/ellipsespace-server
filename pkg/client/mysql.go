@@ -6,10 +6,11 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/qwuiemme/ellipsespace-server/config"
 )
 
 func Connect() *sql.DB {
-	db, err := sql.Open("mysql", "admin:admin@/ellipsespace")
+	db, err := sql.Open("mysql", config.New().DBConnectionString)
 
 	if err != nil {
 		log.Fatal(err)

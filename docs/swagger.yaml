@@ -97,12 +97,12 @@ definitions:
       msg:
         type: string
     type: object
-host: localhost:8888
+host: ellipsespace.ml
 info:
   contact: {}
   description: API for the Encyclopedia of Space project
   title: EllipseSpace API
-  version: "0.0"
+  version: "1.0"
 paths:
   /api/add-object-catologue:
     post:

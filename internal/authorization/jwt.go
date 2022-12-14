@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/qwuiemme/ellipsespace-server/config"
 )
 
-var secrets = []byte("123456") // Это поле добавлено временно и будет изменено и скрыто в github в процессе разработки
+var secrets = []byte(config.New().JwtSecrets)
 
 type JWT struct {
 	SessionBase
