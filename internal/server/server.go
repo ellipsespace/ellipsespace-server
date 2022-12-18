@@ -23,5 +23,5 @@ func (s *Server) Run(addr string) error {
 func (s Server) MakeAddr() string {
 	conf := config.New()
 
-	return conf.AppIP + ":" + conf.AppPort
+	return ":" + conf.Port
 }

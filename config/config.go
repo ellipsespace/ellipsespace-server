@@ -3,16 +3,14 @@ package config
 import "os"
 
 type Config struct {
-	AppIP              string
-	AppPort            string
+	Port               string
 	JwtSecrets         string
 	DBConnectionString string
 }
 
 func New() Config {
 	return Config{
-		AppIP:              getValue("APP_IP", "localhost"),
-		AppPort:            getValue("APP_PORT", "8888"),
+		Port:               getValue("PORT", "8080"),
 		JwtSecrets:         getValue("JWT_SECRETS", "CHANGE_ME"),
 		DBConnectionString: getValue("CONN_STRING", "CHANGE_ME"),
 	}
