@@ -3,7 +3,6 @@ package client
 import (
 	"database/sql"
 	"log"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/qwuiemme/ellipsespace-server/config"
@@ -16,8 +15,10 @@ func Connect() *sql.DB {
 		log.Fatal(err)
 	}
 
-	db.SetConnMaxLifetime(10 * time.Second)
-	db.SetMaxOpenConns(100)
+	db.SetConnMaxIdleTime(0)
+	db.SetConnMaxLifetime(0)
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(10)
 
 	return db
 }
