@@ -16,8 +16,10 @@ import (
 func InitHandler() *gin.Engine {
 	router := gin.New()
 	router.LoadHTMLGlob("pages/*")
+	router.Static("/static", "static/")
 
 	router.GET("/", indexHandler)
+	router.GET("/tech-stack", techStackHandler)
 
 	api := router.Group("/api/")
 	{
@@ -50,6 +52,10 @@ func InitHandler() *gin.Engine {
 
 func indexHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "index", nil)
+}
+
+func techStackHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "tech-stack", nil)
 }
 
 // @Summary Add Object Catalogue

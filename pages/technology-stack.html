@@ -1,0 +1,22 @@
+{{ define "tech-stack" }}
+{{ template "header" }}
+<div class="container">
+<p>Мы считаем, что любые технологии, используемые на нашем сайте, должны быть опубликованы. Ниже представлен данный список.</p>
+
+<h2 class="text-center">Сервер</h1>
+<ul>
+    <li>Основная часть сервера написана на <a href="https://go.dev/dl/" target="_blank">Golang</a>;</li>
+    <li>Фреймворк <a href="https://github.com/gin-gonic/gin" target="_blank">gin</a>;</li>
+    <li>Для автогенерации документации используется <a href="https://github.com/swaggo/swag" target="_blank">swaggo</a>;</li>
+    <li>Для работы с jwt-токенами используется <a href="https://github.com/golang-jwt/jwt" target="_blank" >jwt-go</a>;</li>
+    <li>Для подключения к mysql базе данных используется <a href="https://github.com/go-sql-driver/mysql" target="_blank">go-mysql-driver</a>.</li>
+</ul>
+
+<h2 class="text-center">Сайт</h1>
+    <ul>
+        <li>Для визуального оформления сайта используется <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a>;</li>
+        <li>Шрифты для сайта предоставлены <a href="https://fonts.google.com/" target="_blank">Google Fonts</a>.</li>
+    </ul>
+</div>
+{{ template "footer" }}
+{{ end }}
