@@ -399,18 +399,17 @@ func updateSessionHandler(c *gin.Context) {
 
 // @Summary Id from the current JWT token
 // @Security ApiKeyAuth
-// @Tags MainAPI
+// @Tags Sessions
 // @Description Get the Id from the current JWT token
 // @Accept json
 // @Produce json
+// @Success 200 {string}
 // @Failure 401
 // @Router /api/session/id [get]
 func idSessionHandler(c *gin.Context) {
 	sb := authorization.ParseJWTFromHeader(c)
 
-	c.JSON(http.StatusOK, serverstatus.StatusJson{
-		Message: strconv.Itoa(sb.Id),
-	})
+	c.JSON(http.StatusOK, strconv.Itoa(sb.Id))
 }
 
 // @Summary Delete Session
