@@ -8,10 +8,10 @@ import (
 )
 
 // @Title EllipseSpace API
-// @version 1.0
+// @version 1.1.0
 // @description API for the Encyclopedia of Space project
 
-// @host ellipsespace.ml
+// @host ellipsespace.onrender.com
 // @BasePath /
 
 // @securityDefinitions.apikey ApiKeyAuth

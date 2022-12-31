@@ -97,12 +97,12 @@ definitions:
       msg:
         type: string
     type: object
-host: ellipsespace.ml
+host: ellipsespace.onrender.com
 info:
   contact: {}
   description: API for the Encyclopedia of Space project
   title: EllipseSpace API
-  version: "1.0"
+  version: 1.1.0
 paths:
   /api/add-object-catologue:
     post:
@@ -328,6 +328,21 @@ paths:
       summary: Delete Session
       tags:
       - Sessions
+  /api/session/id:
+    get:
+      consumes:
+      - application/json
+      description: Get the Id from the current JWT token
+      produces:
+      - application/json
+      responses:
+        "401":
+          description: Unauthorized
+      security:
+      - ApiKeyAuth: []
+      summary: Id from the current JWT token
+      tags:
+      - MainAPI
   /api/session/update:
     put:
       consumes:

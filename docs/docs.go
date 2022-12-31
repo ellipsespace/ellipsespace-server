@@ -367,6 +367,31 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/session/id": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get the Id from the current JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MainAPI"
+                ],
+                "summary": "Id from the current JWT token",
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/api/session/update": {
             "put": {
                 "security": [
@@ -634,8 +659,8 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "ellipsespace.ml",
+	Version:          "1.1.0",
+	Host:             "ellipsespace.onrender.com",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "EllipseSpace API",
