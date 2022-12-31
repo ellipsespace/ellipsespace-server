@@ -399,7 +399,7 @@ func updateSessionHandler(c *gin.Context) {
 
 // @Summary Id from the current JWT token
 // @Security ApiKeyAuth
-// @Tags MainAPI
+// @Tags Sessions
 // @Description Get the Id from the current JWT token
 // @Accept json
 // @Produce json
