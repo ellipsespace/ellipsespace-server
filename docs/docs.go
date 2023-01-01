@@ -373,14 +373,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/session/id": {
+        "/api/session/info": {
             "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get the Id from the current JWT token",
+                "description": "Get the info from the current JWT token",
                 "consumes": [
                     "application/json"
                 ],
@@ -390,12 +390,12 @@ const docTemplate = `{
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Id from the current JWT token",
+                "summary": "Info from the current JWT token",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/authorization.SessionBase"
                         }
                     },
                     "401": {
@@ -537,6 +537,20 @@ const docTemplate = `{
                 }
             }
         },
+        "authorization.SessionBase": {
+            "type": "object",
+            "properties": {
+                "access-level": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "sname": {
+                    "type": "string"
+                }
+            }
+        },
         "authorization.SessionJsonDelete": {
             "type": "object",
             "properties": {
@@ -671,7 +685,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.1.1",
+	Version:          "1.2.0",
 	Host:             "ellipsespace.onrender.com",
 	BasePath:         "/",
 	Schemes:          []string{},

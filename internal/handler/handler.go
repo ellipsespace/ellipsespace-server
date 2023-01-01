@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -36,7 +35,7 @@ func InitHandler() *gin.Engine {
 		api.GET("get-object-catalogue", getObjectCatalogueHandler)
 		api.GET("get-all-object-catalogue", getAllObjectCatalogueHandler)
 		sessions.PUT("update", updateSessionHandler)
-		sessions.GET("id", idSessionHandler)
+		sessions.GET("info", idSessionHandler)
 
 		api.Use(authorization.AdminAccessLevelRequired)
 		sessions.Use(authorization.AdminAccessLevelRequired)
@@ -414,19 +413,19 @@ func updateSessionHandler(c *gin.Context) {
 	})
 }
 
-// @Summary Id from the current JWT token
+// @Summary Info from the current JWT token
 // @Security ApiKeyAuth
 // @Tags Sessions
-// @Description Get the Id from the current JWT token
+// @Description Get the info from the current JWT token
 // @Accept json
 // @Produce json
-// @Success 200 {object} string
+// @Success 200 {object} authorization.SessionBase
 // @Failure 401
-// @Router /api/session/id [get]
+// @Router /api/session/info [get]
 func idSessionHandler(c *gin.Context) {
 	sb := authorization.ParseJWTFromHeader(c)
 
-	c.JSON(http.StatusOK, strconv.Itoa(sb.Id))
+	c.JSON(http.StatusOK, sb)
 }
 
 // @Summary Delete Session

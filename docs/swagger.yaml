@@ -11,6 +11,15 @@ definitions:
       sname:
         type: string
     type: object
+  authorization.SessionBase:
+    properties:
+      access-level:
+        type: integer
+      id:
+        type: integer
+      sname:
+        type: string
+    type: object
   authorization.SessionJsonDelete:
     properties:
       id:
@@ -102,7 +111,7 @@ info:
   contact: {}
   description: API for the Encyclopedia of Space project
   title: EllipseSpace API
-  version: 1.1.1
+  version: 1.2.0
 paths:
   /api/add-object-catologue:
     post:
@@ -332,23 +341,23 @@ paths:
       summary: Delete Session
       tags:
       - Sessions
-  /api/session/id:
+  /api/session/info:
     get:
       consumes:
       - application/json
-      description: Get the Id from the current JWT token
+      description: Get the info from the current JWT token
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/authorization.SessionBase'
         "401":
           description: Unauthorized
       security:
       - ApiKeyAuth: []
-      summary: Id from the current JWT token
+      summary: Info from the current JWT token
       tags:
       - Sessions
   /api/session/update:
