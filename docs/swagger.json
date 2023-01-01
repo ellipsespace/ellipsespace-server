@@ -4,7 +4,7 @@
         "description": "API for the Encyclopedia of Space project",
         "title": "EllipseSpace API",
         "contact": {},
-        "version": "1.1.0"
+        "version": "1.1.1"
     },
     "host": "ellipsespace.onrender.com",
     "basePath": "/",
@@ -293,6 +293,12 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/serverstatus.StatusJson"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/serverstatus.StatusJson"
                         }

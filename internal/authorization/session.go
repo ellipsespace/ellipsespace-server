@@ -61,6 +61,33 @@ func GetSession(sessionName string) (s Session, err error) {
 	return
 }
 
+func GetSessionsWithName(sessionName string) (sM []Session, err error) {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query(fmt.Sprintf("SELECT * FROM `sessions` WHERE SessionName = '%s'", sessionName))
+
+	if err != nil {
+		return []Session{}, err
+	}
+
+	defer res.Close()
+
+	for res.Next() {
+		var s = Session{}
+
+		err = res.Scan(&s.Id, &s.SessionName, &s.Password, &s.AccessLevel)
+
+		if err != nil {
+			return []Session{}, err
+		}
+
+		sM = append(sM, s)
+	}
+
+	return
+}
+
 func (s *Session) AddToDatabase() error {
 	conn := client.Connect()
 	defer conn.Close()

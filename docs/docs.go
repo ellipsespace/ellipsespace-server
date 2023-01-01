@@ -304,6 +304,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/serverstatus.StatusJson"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/serverstatus.StatusJson"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -665,7 +671,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.1.0",
+	Version:          "1.1.1",
 	Host:             "ellipsespace.onrender.com",
 	BasePath:         "/",
 	Schemes:          []string{},

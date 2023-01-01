@@ -102,7 +102,7 @@ info:
   contact: {}
   description: API for the Encyclopedia of Space project
   title: EllipseSpace API
-  version: 1.1.0
+  version: 1.1.1
 paths:
   /api/add-object-catologue:
     post:
@@ -285,6 +285,10 @@ paths:
             type: number
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/serverstatus.StatusJson'
         "500":
