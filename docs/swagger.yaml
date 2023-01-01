@@ -336,13 +336,17 @@ paths:
       produces:
       - application/json
       responses:
+        "200":
+          description: OK
+          schema:
+            type: string
         "401":
           description: Unauthorized
       security:
       - ApiKeyAuth: []
       summary: Id from the current JWT token
       tags:
-      - MainAPI
+      - Sessions
   /api/session/update:
     put:
       consumes:

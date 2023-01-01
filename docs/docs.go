@@ -382,10 +382,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "MainAPI"
+                    "Sessions"
                 ],
                 "summary": "Id from the current JWT token",
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized"
                     }

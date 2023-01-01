@@ -403,7 +403,7 @@ func updateSessionHandler(c *gin.Context) {
 // @Description Get the Id from the current JWT token
 // @Accept json
 // @Produce json
-// @Success 200 {string}
+// @Success 200 {object} string
 // @Failure 401
 // @Router /api/session/id [get]
 func idSessionHandler(c *gin.Context) {
