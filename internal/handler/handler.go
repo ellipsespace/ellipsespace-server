@@ -83,6 +83,22 @@ func addObjectCatalogueHandler(c *gin.Context) {
 		return
 	}
 
+	cM, err := catalogueobject.GetFromDatabaseWithName(obj.Name)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+	}
+
+	if len(cM) > 1 {
+		c.JSON(http.StatusForbidden, serverstatus.StatusJson{
+			Message: "An object with this name already exists.",
+		})
+
+		return
+	}
+
 	err = obj.AddToDatabase()
 
 	if err != nil {

@@ -207,6 +207,45 @@ func GetAllFromDatabase() (cs []CatalogueObject, err error) {
 	return
 }
 
+func GetFromDatabaseWithName(sessionName string) (cM []CatalogueObject, err error) {
+	conn := client.Connect()
+	defer conn.Close()
+
+	res, err := conn.Query(fmt.Sprintf("SELECT * FROM `catalogue` WHERE Name = '%s'", sessionName))
+
+	if err != nil {
+		return []CatalogueObject{}, err
+	}
+
+	defer res.Close()
+
+	for res.Next() {
+		var (
+			c         CatalogueObject
+			satelites string
+			photos    string
+		)
+
+		err = res.Scan(&c.Name, &c.Description, &c.OpeningDateTime, &c.SidericConversionPeriod, &c.BodyOrbitalVelocity,
+			&c.Inclination, &satelites, &c.WhoseSatelite, &c.EquatorialRadius, &c.PolarRadius, &c.AverageRadius, &c.Square,
+			&c.Volume, &c.Weight, &c.AverageDensity, &c.GravityAcceleration, &c.FirstSpaceVelocity, &c.SecondSpaceVelocity, &photos)
+
+		c.Satelites = strings.Split(satelites, "\n")
+		c.Photos = strings.Split(satelites, "\n")
+
+		if err != nil {
+			return []CatalogueObject{}, err
+		}
+
+		c.Satelites = strings.Split(satelites, "\n")
+		c.Photos = strings.Split(satelites, "\n")
+
+		cM = append(cM, c)
+	}
+
+	return
+}
+
 func Delete(name string) error {
 	conn := client.Connect()
 	defer conn.Close()
