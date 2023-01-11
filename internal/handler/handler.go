@@ -19,10 +19,11 @@ func InitHandler() *gin.Engine {
 	router.Static("/static", "static/")
 
 	router.GET("/", indexHandler)
-	router.GET("/tech-stack", techStackHandler)
+	router.GET("/tech", techStackHandler)
 
 	api := router.Group("/api/")
 	{
+		catalogue := api.Group("catalogue/")
 		sessions := api.Group("session/")
 		{
 			sessions.POST("create", createSessionHandler)
@@ -32,16 +33,16 @@ func InitHandler() *gin.Engine {
 		api.Use(authorization.AuthorizationRequired)
 		sessions.Use(authorization.AuthorizationRequired)
 
-		api.GET("get-object-catalogue", getObjectCatalogueHandler)
-		api.GET("get-all-object-catalogue", getAllObjectCatalogueHandler)
+		catalogue.GET("get", getObjectCatalogueHandler)
+		catalogue.GET("all", getAllObjectCatalogueHandler)
 		sessions.PUT("update", updateSessionHandler)
 
 		api.Use(authorization.AdminAccessLevelRequired)
 		sessions.Use(authorization.AdminAccessLevelRequired)
 
-		api.POST("add-object-catologue", addObjectCatalogueHandler)
-		api.PUT("update-object-catalogue", updateObjectCatalogueHandler)
-		api.DELETE("delete-object-catalogue", deleteObjectCatalogueHandler)
+		catalogue.POST("add", addObjectCatalogueHandler)
+		catalogue.PUT("update", updateObjectCatalogueHandler)
+		catalogue.DELETE("delete", deleteObjectCatalogueHandler)
 		sessions.DELETE("delete", deleteSessionHandler)
 	}
 
@@ -60,7 +61,7 @@ func techStackHandler(c *gin.Context) {
 
 // @Summary Add Object Catalogue
 // @Security ApiKeyAuth
-// @Tags MainAPI
+// @Tags Catalogue
 // @Description Add a record of the object to the database.
 // @Accept json
 // @Produce json
@@ -69,7 +70,7 @@ func techStackHandler(c *gin.Context) {
 // @Failure 400 {object} serverstatus.StatusJson
 // @Failure 401
 // @Failure 500 {object} serverstatus.StatusJson
-// @Router /api/add-object-catologue [post]
+// @Router /api/catalogue/add [post]
 func addObjectCatalogueHandler(c *gin.Context) {
 	obj, err := catalogueobject.Unmarshal(c.Request.Body)
 
@@ -98,7 +99,7 @@ func addObjectCatalogueHandler(c *gin.Context) {
 
 // @Summary Update Object Catalogue
 // @Security ApiKeyAuth
-// @Tags MainAPI
+// @Tags Catalogue
 // @Description Update a record of the object to the database.
 // @Accept json
 // @Produce json
@@ -107,7 +108,7 @@ func addObjectCatalogueHandler(c *gin.Context) {
 // @Failure 400 {object} serverstatus.StatusJson
 // @Failure 401
 // @Failure 500 {object} serverstatus.StatusJson
-// @Router /api/update-object-catologue [put]
+// @Router /api/catalogue/update [put]
 func updateObjectCatalogueHandler(c *gin.Context) {
 	obj, err := catalogueobject.Unmarshal(c.Request.Body)
 
@@ -136,7 +137,7 @@ func updateObjectCatalogueHandler(c *gin.Context) {
 
 // @Summary Delete Object Catalogue
 // @Security ApiKeyAuth
-// @Tags MainAPI
+// @Tags Catalogue
 // @Description Delete a record of the object to the database by name.
 // @Accept json
 // @Produce json
@@ -145,7 +146,7 @@ func updateObjectCatalogueHandler(c *gin.Context) {
 // @Failure 400 {object} serverstatus.StatusJson
 // @Failure 401
 // @Failure 500 {object} serverstatus.StatusJson
-// @Router /api/delete-object-catologue [delete]
+// @Router /api/catalogue/delete [delete]
 func deleteObjectCatalogueHandler(c *gin.Context) {
 	obj, err := catalogueobject.UnmarshalJsonGet(c.Request.Body)
 
@@ -174,7 +175,7 @@ func deleteObjectCatalogueHandler(c *gin.Context) {
 
 // @Summary Get Object Catalogue
 // @Security ApiKeyAuth
-// @Tags MainAPI
+// @Tags Catalogue
 // @Description Returns an object record or null object with the passed name.
 // @Accept json
 // @Produce json
@@ -183,7 +184,7 @@ func deleteObjectCatalogueHandler(c *gin.Context) {
 // @Failure 400 {object} serverstatus.StatusJson
 // @Failure 401
 // @Failure 500 {object} serverstatus.StatusJson
-// @Router /api/get-object-catologue [get]
+// @Router /api/catalogue/get [get]
 func getObjectCatalogueHandler(c *gin.Context) {
 	name, err := catalogueobject.UnmarshalJsonGet(c.Request.Body)
 
@@ -210,13 +211,13 @@ func getObjectCatalogueHandler(c *gin.Context) {
 
 // @Summary Get All Objects Catalogue
 // @Security ApiKeyAuth
-// @Tags MainAPI
+// @Tags Catalogue
 // @Description Returns all object records in the database.
 // @Produce json
 // @Success 200 {object} []catalogueobject.CatalogueObject
 // @Failure 401
 // @Failure 500 {object} serverstatus.StatusJson
-// @Router /api/get-all-object-catologue [get]
+// @Router /api/catalogue/all [get]
 func getAllObjectCatalogueHandler(c *gin.Context) {
 	slice, err := catalogueobject.GetAllFromDatabase()
 
