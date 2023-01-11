@@ -8,7 +8,7 @@ import (
 )
 
 // @Title EllipseSpace API
-// @version 1.2.0
+// @version 1.3.0
 // @description API for the Encyclopedia of Space project
 
 // @host ellipsespace.onrender.com

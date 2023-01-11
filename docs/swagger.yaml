@@ -111,9 +111,9 @@ info:
   contact: {}
   description: API for the Encyclopedia of Space project
   title: EllipseSpace API
-  version: 1.2.0
+  version: 1.3.0
 paths:
-  /api/add-object-catologue:
+  /api/catalogue/add:
     post:
       consumes:
       - application/json
@@ -146,8 +146,31 @@ paths:
       - ApiKeyAuth: []
       summary: Add Object Catalogue
       tags:
-      - MainAPI
-  /api/delete-object-catologue:
+      - Catalogue
+  /api/catalogue/all:
+    get:
+      description: Returns all object records in the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/catalogueobject.CatalogueObject'
+            type: array
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Objects Catalogue
+      tags:
+      - Catalogue
+  /api/catalogue/delete:
     delete:
       consumes:
       - application/json
@@ -180,31 +203,8 @@ paths:
       - ApiKeyAuth: []
       summary: Delete Object Catalogue
       tags:
-      - MainAPI
-  /api/get-all-object-catologue:
-    get:
-      description: Returns all object records in the database.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/catalogueobject.CatalogueObject'
-            type: array
-        "401":
-          description: Unauthorized
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/serverstatus.StatusJson'
-      security:
-      - ApiKeyAuth: []
-      summary: Get All Objects Catalogue
-      tags:
-      - MainAPI
-  /api/get-object-catologue:
+      - Catalogue
+  /api/catalogue/get:
     get:
       consumes:
       - application/json
@@ -237,7 +237,41 @@ paths:
       - ApiKeyAuth: []
       summary: Get Object Catalogue
       tags:
-      - MainAPI
+      - Catalogue
+  /api/catalogue/update:
+    put:
+      consumes:
+      - application/json
+      description: Update a record of the object to the database.
+      parameters:
+      - description: Object info
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/catalogueobject.CatalogueObject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Object Catalogue
+      tags:
+      - Catalogue
   /api/session/auth:
     get:
       consumes:
@@ -398,40 +432,6 @@ paths:
       summary: Update Session
       tags:
       - Sessions
-  /api/update-object-catologue:
-    put:
-      consumes:
-      - application/json
-      description: Update a record of the object to the database.
-      parameters:
-      - description: Object info
-        in: body
-        name: Input
-        required: true
-        schema:
-          $ref: '#/definitions/catalogueobject.CatalogueObject'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/serverstatus.StatusJson'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/serverstatus.StatusJson'
-        "401":
-          description: Unauthorized
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/serverstatus.StatusJson'
-      security:
-      - ApiKeyAuth: []
-      summary: Update Object Catalogue
-      tags:
-      - MainAPI
 securityDefinitions:
   ApiKeyAuth:
     in: header

@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/add-object-catologue": {
+        "/api/catalogue/add": {
             "post": {
                 "security": [
                     {
@@ -31,7 +31,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "MainAPI"
+                    "Catalogue"
                 ],
                 "summary": "Add Object Catalogue",
                 "parameters": [
@@ -70,7 +70,44 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/delete-object-catologue": {
+        "/api/catalogue/all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Returns all object records in the database.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Catalogue"
+                ],
+                "summary": "Get All Objects Catalogue",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/catalogueobject.CatalogueObject"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/serverstatus.StatusJson"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/catalogue/delete": {
             "delete": {
                 "security": [
                     {
@@ -85,7 +122,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "MainAPI"
+                    "Catalogue"
                 ],
                 "summary": "Delete Object Catalogue",
                 "parameters": [
@@ -124,44 +161,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/get-all-object-catologue": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Returns all object records in the database.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "MainAPI"
-                ],
-                "summary": "Get All Objects Catalogue",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/catalogueobject.CatalogueObject"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/serverstatus.StatusJson"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/get-object-catologue": {
+        "/api/catalogue/get": {
             "get": {
                 "security": [
                     {
@@ -176,7 +176,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "MainAPI"
+                    "Catalogue"
                 ],
                 "summary": "Get Object Catalogue",
                 "parameters": [
@@ -195,6 +195,60 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/catalogueobject.CatalogueObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/serverstatus.StatusJson"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/serverstatus.StatusJson"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/catalogue/update": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update a record of the object to the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Catalogue"
+                ],
+                "summary": "Update Object Catalogue",
+                "parameters": [
+                    {
+                        "description": "Object info",
+                        "name": "Input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/catalogueobject.CatalogueObject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serverstatus.StatusJson"
                         }
                     },
                     "400": {
@@ -463,60 +517,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/api/update-object-catologue": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Update a record of the object to the database.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "MainAPI"
-                ],
-                "summary": "Update Object Catalogue",
-                "parameters": [
-                    {
-                        "description": "Object info",
-                        "name": "Input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/catalogueobject.CatalogueObject"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/serverstatus.StatusJson"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/serverstatus.StatusJson"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/serverstatus.StatusJson"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -685,7 +685,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.2.0",
+	Version:          "1.3.0",
 	Host:             "ellipsespace.onrender.com",
 	BasePath:         "/",
 	Schemes:          []string{},
