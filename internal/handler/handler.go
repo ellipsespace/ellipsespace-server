@@ -36,6 +36,7 @@ func InitHandler() *gin.Engine {
 		catalogue.GET("get", getObjectCatalogueHandler)
 		catalogue.GET("all", getAllObjectCatalogueHandler)
 		sessions.PUT("update", updateSessionHandler)
+		sessions.GET("info", idSessionHandler)
 
 		api.Use(authorization.AdminAccessLevelRequired)
 		sessions.Use(authorization.AdminAccessLevelRequired)
@@ -238,6 +239,7 @@ func getAllObjectCatalogueHandler(c *gin.Context) {
 // @Param Input body authorization.Session true "Session data"
 // @Success 201 {number} int SessionID
 // @Failure 400 {object} serverstatus.StatusJson
+// @Failure 403 {object} serverstatus.StatusJson
 // @Failure 500 {object} serverstatus.StatusJson
 // @Router /api/session/create [post]
 func createSessionHandler(c *gin.Context) {
@@ -246,6 +248,22 @@ func createSessionHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, serverstatus.StatusJson{
 			Message: err.Error(),
+		})
+
+		return
+	}
+
+	sM, err := authorization.GetSessionsWithName(obj.SessionName)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, serverstatus.StatusJson{
+			Message: err.Error(),
+		})
+	}
+
+	if len(sM) > 1 {
+		c.JSON(http.StatusForbidden, serverstatus.StatusJson{
+			Message: "A session with this name already exists.",
 		})
 
 		return
@@ -394,6 +412,21 @@ func updateSessionHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, serverstatus.StatusJson{
 		Message: "Done.",
 	})
+}
+
+// @Summary Info from the current JWT token
+// @Security ApiKeyAuth
+// @Tags Sessions
+// @Description Get the info from the current JWT token
+// @Accept json
+// @Produce json
+// @Success 200 {object} authorization.SessionBase
+// @Failure 401
+// @Router /api/session/info [get]
+func idSessionHandler(c *gin.Context) {
+	sb := authorization.ParseJWTFromHeader(c)
+
+	c.JSON(http.StatusOK, sb)
 }
 
 // @Summary Delete Session

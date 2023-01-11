@@ -304,6 +304,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/serverstatus.StatusJson"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/serverstatus.StatusJson"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -363,6 +369,37 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/serverstatus.StatusJson"
                         }
+                    }
+                }
+            }
+        },
+        "/api/session/info": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get the info from the current JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Info from the current JWT token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorization.SessionBase"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -494,6 +531,20 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                },
+                "sname": {
+                    "type": "string"
+                }
+            }
+        },
+        "authorization.SessionBase": {
+            "type": "object",
+            "properties": {
+                "access-level": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "sname": {
                     "type": "string"
@@ -634,8 +685,8 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "ellipsespace.ml",
+	Version:          "1.2.0",
+	Host:             "ellipsespace.onrender.com",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "EllipseSpace API",

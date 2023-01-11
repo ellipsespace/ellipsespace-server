@@ -11,6 +11,15 @@ definitions:
       sname:
         type: string
     type: object
+  authorization.SessionBase:
+    properties:
+      access-level:
+        type: integer
+      id:
+        type: integer
+      sname:
+        type: string
+    type: object
   authorization.SessionJsonDelete:
     properties:
       id:
@@ -97,12 +106,12 @@ definitions:
       msg:
         type: string
     type: object
-host: ellipsespace.ml
+host: ellipsespace.onrender.com
 info:
   contact: {}
   description: API for the Encyclopedia of Space project
   title: EllipseSpace API
-  version: "1.0"
+  version: 1.2.0
 paths:
   /api/add-object-catologue:
     post:
@@ -287,6 +296,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/serverstatus.StatusJson'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/serverstatus.StatusJson'
         "500":
           description: Internal Server Error
           schema:
@@ -326,6 +339,25 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Delete Session
+      tags:
+      - Sessions
+  /api/session/info:
+    get:
+      consumes:
+      - application/json
+      description: Get the info from the current JWT token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorization.SessionBase'
+        "401":
+          description: Unauthorized
+      security:
+      - ApiKeyAuth: []
+      summary: Info from the current JWT token
       tags:
       - Sessions
   /api/session/update:
