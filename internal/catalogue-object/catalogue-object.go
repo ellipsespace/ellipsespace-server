@@ -105,7 +105,7 @@ func (c *CatalogueObject) Update() error {
 	conn := client.Connect()
 	defer conn.Close()
 
-	res, err := conn.Query(fmt.Sprintf("UPDATE `catalogue` SET Name = '%s', Description = '%s', OpeningDatetTime = '%s', SidericConversionPeriod = '%s', BodyOrbitalVelocity = '%s', Inclination = '%s', Satelites = '%s', WhoseSatelite = '%s', EquatorialRadius = '%s', PolarRadius = '%s', AverageRadius = '%s', Square = '%s', Volume = '%s', Weight = '%s', AverageDensity = '%s', GravityAcceleration = '%s', FirstSpaceVelocity = '%s', SecondSpaceVelocity = '%s', Photos = '%s'",
+	res, err := conn.Query(fmt.Sprintf("UPDATE `catalogue` SET Name = '%s', Description = '%s', OpeningDatetTime = '%s', SidericConversionPeriod = '%s', BodyOrbitalVelocity = '%s', Inclination = '%s', Satelites = '%s', WhoseSatelite = '%s', EquatorialRadius = '%s', PolarRadius = '%s', AverageRadius = '%s', Square = '%s', Volume = '%s', Weight = '%s', AverageDensity = '%s', GravityAcceleration = '%s', FirstSpaceVelocity = '%s', SecondSpaceVelocity = '%s', Photos = '%s' WHERE Name = '%s'",
 		c.Name,
 		c.Description,
 		c.OpeningDateTime,
@@ -125,6 +125,7 @@ func (c *CatalogueObject) Update() error {
 		fmt.Sprintf("%g", c.FirstSpaceVelocity),
 		fmt.Sprintf("%g", c.SecondSpaceVelocity),
 		strings.Join(c.Photos, "\n"),
+		c.Name,
 	))
 
 	if err != nil {
