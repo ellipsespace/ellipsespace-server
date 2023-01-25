@@ -1,0 +1,17 @@
+html {
+    scroll-behavior: smooth;
+}
+
+.btn {
+    color: #6610f2;
+}
+
+.sc-icon{
+    fill: gray;
+    transition-duration: 0.5s;
+    transition-property: all;
+}
+
+.sc-icon:hover{
+    fill: #6610f2;
+}

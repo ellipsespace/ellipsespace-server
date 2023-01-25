@@ -1,7 +1,19 @@
 {{ define "index" }}
 {{ template "header" }}
-<div class="container">
+
+<div class="container text-center">   
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">    
+      <main class="px-3">
+        <h1>EllipseSpace</h1>
+        <p class="lead">Онлайн энкциклопедия о космосе и космических объектах.</p>
+        <p class="lead">
+          <a href="/about" class="btn btn-lg btn-light fw-bold border-white bg-white">Подробнее</a>
+        </p>
+      </main>
+    </div>
+  <!--
   <div class="text-center">
+    <img src="static/img/banner.jpg"/>
     <h2>Русский</h2>
     <p class="text-muted">Вы обратились к серверу EllipseSpace, однако, мы на данный момент не предоставляем доступ к сервисам EllipseSpace через
     веб-сайты. Использовать функционал EllipseSpace можно только с помощью настольной программы.
@@ -84,10 +96,11 @@
       <h2>Клиент для EllipseSpace / Client for EllipseSpace</h2>
       <p>Для того, чтобы воспользоваться функционалом EllipseSpace, установите настольную программу. Совместима с Windows.</p>
       <p>In order to take advantage of the EllipseSpace functionality, install the desktop program. Compatible with Windows.</p>
-      <button class="btn btn-outline-light" type="button"><a class="text-light" href="https://github.com/ellipsespace/ellipsespace-client/releases/latest" download>Установить / Download</a></button>
+      <button class="btn btn-outline-light" type="button"><a class="text-light" href="https://github.com/ellipsespace/ellipsespace-client/releases/latest/EllipseSpaceClient.zip" download>Установить / Download</a></button>
     </div>
   </div>
 </div>
+-->
 </div>
 {{ template "footer" }}
 {{ end }}
